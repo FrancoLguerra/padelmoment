@@ -30,5 +30,16 @@ public class GlobalExceptionHandler {
 	                mensaje
 	        );
 	    }
+	   @ExceptionHandler(IllegalArgumentException.class)
+	   @ResponseStatus(HttpStatus.BAD_REQUEST)
+	   public ErrorResponse manejarErrorDeValidacion(
+	           IllegalArgumentException ex) {
+
+	       return new ErrorResponse(
+	               400,
+	               "Bad Request",
+	               ex.getMessage()
+	       );
+	   }
 	
 }
