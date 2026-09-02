@@ -75,7 +75,7 @@ public class TurnoService {
 	
 	public void eliminar(Long id) {
 		if(!turnoRepository.existsById(id)) {
-			throw new RuntimeException("Turno no encontrdo con el id: " + id);
+			throw new RuntimeException("Turno no encontrado con el id: " + id);
 		}
 		
 		turnoRepository.deleteById(id);
