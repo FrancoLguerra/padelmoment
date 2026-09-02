@@ -1,4 +1,5 @@
 package com.padelmoment.entity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,10 +14,13 @@ public class Cancha {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+	@Column(name= "NOMBRE")
 	@NotBlank(message = "El nombre es obligatorio")
 	private String nombre;
+	@Column(name= "TIPO")
 	@NotBlank(message = "El tipo es obligatorio")
 	private String tipo;
+	@Column(name= "ACTIVA")
 	@NotNull(message = "El campo activa es obligatorio")
 	private Boolean activa;
 	

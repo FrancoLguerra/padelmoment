@@ -3,6 +3,7 @@ package com.padelmoment.entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,14 +19,18 @@ public class Turno {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+	@Column(name= "FECHA")
 	private LocalDate fecha;
+	@Column(name= "HORA_INICIO")
 	private LocalTime horaInicio;
+	@Column(name= "HORA_FIN")
 	private LocalTime horaFin;
+	@Column(name= "CLIENTE")
 	private String cliente;
 	@ManyToOne
 	@JoinColumn(name = "cancha_id")
 	private Cancha cancha;
+	@Column(name= "ESTADO")
 	private String estado;
 	
 	public Turno() {}
