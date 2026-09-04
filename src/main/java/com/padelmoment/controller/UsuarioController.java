@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.padelmoment.dto.UsuarioRequest;
+import com.padelmoment.dto.UsuarioResponse;
 import com.padelmoment.entity.Usuario;
 import com.padelmoment.service.UsuarioService;
 
@@ -28,22 +29,22 @@ public class UsuarioController {
 	}
 	
 	@GetMapping
-	public List<Usuario> listarUsuarios(){
+	public List<UsuarioResponse> listarUsuarios(){
 		return usuarioService.listarUsuarios();
 	}
 	
 	@GetMapping("/{id}")
-	public Usuario findById(@PathVariable Long id) {
+	public UsuarioResponse findById(@PathVariable Long id) {
 		return usuarioService.findById(id);
 	}
 	
 	@PostMapping
-	public Usuario crear(@Valid @RequestBody UsuarioRequest request) {
+	public UsuarioResponse crear(@Valid @RequestBody UsuarioRequest request) {
 		return usuarioService.crear(request);
 	}
 	
 	@PutMapping("/{id}")
-	public Usuario actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioRequest request) {
+	public UsuarioResponse actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioRequest request) {
 		return usuarioService.actualizar(id, request);
 	}
 	

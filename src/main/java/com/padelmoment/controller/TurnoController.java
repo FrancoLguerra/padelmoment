@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.padelmoment.dto.TurnoRequest;
-import com.padelmoment.entity.Turno;
+import com.padelmoment.dto.TurnoResponse;
 import com.padelmoment.service.TurnoService;
 import jakarta.validation.Valid;
 
@@ -27,17 +27,17 @@ public class TurnoController {
 	}
 	
 	@GetMapping
-	public List<Turno> listarTurnos(){
+	public List<TurnoResponse> listarTurnos(){
 		return turnoService.listarTurnos();
 	}
 	
 	@GetMapping("/{id}")
-	public Turno buscarPorId(@PathVariable Long id) {
+	public TurnoResponse buscarPorId(@PathVariable Long id) {
 		return turnoService.buscarPorId(id);
 	}
 	
 	@PostMapping
-	public Turno crear(@Valid @RequestBody TurnoRequest request) {
+	public TurnoResponse crear(@Valid @RequestBody TurnoRequest request) {
 		return turnoService.crear(request);
 	}
 	
@@ -47,7 +47,7 @@ public class TurnoController {
 	}
 	
 	@PutMapping("/{id}")
-	public Turno actualizar(@PathVariable Long id,@Valid @RequestBody TurnoRequest request  ) {
+	public TurnoResponse actualizar(@PathVariable Long id,@Valid @RequestBody TurnoRequest request  ) {
 		
 		return turnoService.actualizar(id, request);
 	}

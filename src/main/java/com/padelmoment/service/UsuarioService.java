@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.padelmoment.dto.UsuarioRequest;
+import com.padelmoment.dto.UsuarioResponse;
 import com.padelmoment.entity.Usuario;
 import com.padelmoment.exception.UsuarioNotFoundException;
 import com.padelmoment.repository.UsuarioRepository;
@@ -17,27 +18,32 @@ public class UsuarioService {
 		this.usuarioRepository = usuarioRepository;
 	}
 	
-	public List<Usuario> listarUsuarios(){
-		return usuarioRepository.findAll();
+	public List<UsuarioResponse> listarUsuarios(){
+		return usuarioRepository.findAll()
+				.stream()
+				.map(this::convertirADto)
+				.toList();
 	}
 	
-	public Usuario findById(Long id) {
-		return usuarioRepository.findById(id)
+	public UsuarioResponse findById(Long id) {
+		Usuario usuario = usuarioRepository.findById(id)
 				.orElseThrow(()->
 				new UsuarioNotFoundException("Usuario no encontrado con el id: " + id));
+		return convertirADto(usuario);
 	}
 	
-	public Usuario crear(UsuarioRequest request) {
+	public UsuarioResponse crear(UsuarioRequest request) {
 		Usuario usuario = new Usuario();
 		usuario.setNombre(request.getNombre());
 		usuario.setApellido(request.getApellido());
 		usuario.setMail(request.getMail());
 		usuario.setPassword(request.getPassword());		
 		usuario.setRol("CLIENTE");
-		return usuarioRepository.save(usuario);
+		Usuario usuarioGuardado = usuarioRepository.save(usuario);
+		return convertirADto(usuarioGuardado);
 	}
 
-	public Usuario actualizar(Long id, UsuarioRequest request) {
+	public UsuarioResponse actualizar(Long id, UsuarioRequest request) {
 		Usuario usuario = usuarioRepository.findById(id)
 				.orElseThrow(()->
 				new UsuarioNotFoundException("Usuario no encontrado con el id: " + id));
@@ -46,7 +52,8 @@ public class UsuarioService {
 		usuario.setApellido(request.getApellido());
 		usuario.setMail(request.getMail());
 		usuario.setPassword(request.getPassword());
-		return usuarioRepository.save(usuario);
+		Usuario usuarioActualizado = usuarioRepository.save(usuario);
+		return convertirADto(usuarioActualizado);
 	}
 	
 	public Usuario actualizarRol(Long id, String rol) {
@@ -63,6 +70,17 @@ public class UsuarioService {
 			throw new UsuarioNotFoundException("Usuario no encontrado con el id: " + id);
 		}
 		usuarioRepository.deleteById(id);
+	}
+	
+	private UsuarioResponse convertirADto(Usuario usuario) {
+		return new UsuarioResponse(
+				usuario.getId(),
+				usuario.getNombre(),
+				usuario.getApellido(),
+				usuario.getMail(),
+				usuario.getRol()
+				);
+	
 	}
 
 }

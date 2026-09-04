@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.padelmoment.dto.TurnoRequest;
+import com.padelmoment.dto.TurnoResponse;
 import com.padelmoment.entity.Turno;
 import com.padelmoment.exception.CanchaNotFoundException;
 import com.padelmoment.exception.TurnoNotFoundException;
@@ -22,15 +23,21 @@ public class TurnoService {
 		this.canchaRepository = canchaRepository;
 	}
 	
-	public List<Turno> listarTurnos(){
-		return turnoRepository.findAll();
-	}
+	public List<TurnoResponse> listarTurnos(){
+		return turnoRepository.findAll()
+				.stream()
+				.map(this::convertirADto)
+				.toList();
+		}
+				
 	
-	public Turno buscarPorId(Long id) {
-		return turnoRepository.findById(id)
+	public TurnoResponse buscarPorId(Long id) {
+		 Turno turno = turnoRepository.findById(id)
 				.orElseThrow(()-> 
 				new TurnoNotFoundException("Turno no encontrado con el id: " + id));
+		return convertirADto(turno);
 	}
+	
 	private void validarHorario(TurnoRequest request) {
 
 	    if (!request.getHoraInicio().isBefore(request.getHoraFin())) {
@@ -40,7 +47,7 @@ public class TurnoService {
 	    }
 	}
 	
-	public Turno crear(TurnoRequest request) {
+	public TurnoResponse crear(TurnoRequest request) {
 		validarHorario(request);
 		Cancha cancha = canchaRepository.findById(request.getCanchaId())
 				.orElseThrow(()->
@@ -61,11 +68,12 @@ public class TurnoService {
 		turno.setCancha(cancha);
 		turno.setEstado("RESERVADA");
 		
-		return turnoRepository.save(turno);
+		Turno turnoGuardado =  turnoRepository.save(turno);
+		return convertirADto(turnoGuardado);
 		
 	}
 	
-	public Turno actualizar(Long id, TurnoRequest request) {
+	public TurnoResponse actualizar(Long id, TurnoRequest request) {
 		validarHorario(request);
 		Turno turno = turnoRepository.findById(id)
 				.orElseThrow(()->
@@ -86,7 +94,8 @@ public class TurnoService {
 		turno.setHoraFin(request.getHoraFin());
 		turno.setFecha(request.getFecha());
 		
-		return turnoRepository.save(turno);
+		Turno turnoActualizado =  turnoRepository.save(turno);
+		return convertirADto(turnoActualizado);
 	}
 	
 	public void eliminar(Long id) {
@@ -95,5 +104,15 @@ public class TurnoService {
 		}
 		
 		turnoRepository.deleteById(id);
+	}
+	
+	private TurnoResponse convertirADto(Turno turno) {
+		return new TurnoResponse(turno.getId(),
+				turno.getFecha(),
+				turno.getHoraInicio(),
+				turno.getHoraFin(),
+				turno.getCliente(),
+				turno.getCancha(),
+				turno.getEstado());
 	}
 }
