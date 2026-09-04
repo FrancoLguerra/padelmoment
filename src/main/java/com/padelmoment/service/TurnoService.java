@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.padelmoment.dto.TurnoRequest;
 import com.padelmoment.entity.Turno;
+import com.padelmoment.exception.CanchaNotFoundException;
+import com.padelmoment.exception.TurnoNotFoundException;
 import com.padelmoment.entity.Cancha;
 import com.padelmoment.repository.CanchaRepository;
 import com.padelmoment.repository.TurnoRepository;
@@ -27,7 +29,7 @@ public class TurnoService {
 	public Turno buscarPorId(Long id) {
 		return turnoRepository.findById(id)
 				.orElseThrow(()-> 
-				new RuntimeException("Turno no encontrado con el id: " + id));
+				new TurnoNotFoundException("Turno no encontrado con el id: " + id));
 	}
 	private void validarHorario(TurnoRequest request) {
 
@@ -42,7 +44,14 @@ public class TurnoService {
 		validarHorario(request);
 		Cancha cancha = canchaRepository.findById(request.getCanchaId())
 				.orElseThrow(()->
-				new RuntimeException("Cancha no encontrada con el id: " + request.getCanchaId()));
+				new CanchaNotFoundException("Cancha no encontrada con el id: " + request.getCanchaId()));
+		boolean existeConflicto = turnoRepository.existeConflicto(
+				request.getCanchaId(), request.getFecha(),request.getHoraInicio(),request.getHoraFin());
+		if(existeConflicto) {
+			throw new IllegalArgumentException(
+		            "La cancha ya está reservada en ese horario"
+		    );
+		}
 		
 		Turno turno = new Turno();
 		turno.setFecha(request.getFecha());
@@ -60,10 +69,17 @@ public class TurnoService {
 		validarHorario(request);
 		Turno turno = turnoRepository.findById(id)
 				.orElseThrow(()->
-				new RuntimeException("Turno no encontrado con el id: " + id));
+				new TurnoNotFoundException("Turno no encontrado con el id: " + id));
 		Cancha cancha = canchaRepository.findById(request.getCanchaId())
 				.orElseThrow(()->
-				new RuntimeException("Cancha no encontrada con el id: " + request.getCanchaId()));
+				new CanchaNotFoundException("Cancha no encontrada con el id: " + request.getCanchaId()));
+		boolean existeConflicto = turnoRepository.existeConflictoExcepto(request.getCanchaId(), request.getFecha(),request.getHoraInicio(),request.getHoraFin(), id);
+		if(existeConflicto) {
+			throw new IllegalArgumentException(
+		            "La cancha ya está reservada en ese horario"
+		    );
+		}
+
 		turno.setCancha(cancha);
 		turno.setCliente(request.getCliente());
 		turno.setHoraInicio(request.getHoraInicio());
@@ -75,7 +91,7 @@ public class TurnoService {
 	
 	public void eliminar(Long id) {
 		if(!turnoRepository.existsById(id)) {
-			throw new RuntimeException("Turno no encontrado con el id: " + id);
+			throw new TurnoNotFoundException("Turno no encontrado con el id: " + id);
 		}
 		
 		turnoRepository.deleteById(id);

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.padelmoment.dto.UsuarioRequest;
 import com.padelmoment.entity.Usuario;
+import com.padelmoment.exception.UsuarioNotFoundException;
 import com.padelmoment.repository.UsuarioRepository;
 
 @Service
@@ -23,7 +24,7 @@ public class UsuarioService {
 	public Usuario findById(Long id) {
 		return usuarioRepository.findById(id)
 				.orElseThrow(()->
-				new RuntimeException("Usuario no encontrado con el id: " + id));
+				new UsuarioNotFoundException("Usuario no encontrado con el id: " + id));
 	}
 	
 	public Usuario crear(UsuarioRequest request) {
@@ -39,7 +40,7 @@ public class UsuarioService {
 	public Usuario actualizar(Long id, UsuarioRequest request) {
 		Usuario usuario = usuarioRepository.findById(id)
 				.orElseThrow(()->
-				new RuntimeException("Usuario no encontrado con el id: " + id));
+				new UsuarioNotFoundException("Usuario no encontrado con el id: " + id));
 		
 		usuario.setNombre(request.getNombre());
 		usuario.setApellido(request.getApellido());
@@ -51,7 +52,7 @@ public class UsuarioService {
 	public Usuario actualizarRol(Long id, String rol) {
 		Usuario usuario = usuarioRepository.findById(id)
 				.orElseThrow(()->
-				new RuntimeException("Usuario no encontrado con el id: " + id));
+				new UsuarioNotFoundException("Usuario no encontrado con el id: " + id));
 		usuario.setRol(rol);
 		
 		return usuarioRepository.save(usuario);
@@ -59,7 +60,7 @@ public class UsuarioService {
 	
 	public void eliminar(Long id) {
 		if(! usuarioRepository.existsById(id)) {
-			throw new RuntimeException("Usuario no encontrado con el id: " + id);
+			throw new UsuarioNotFoundException("Usuario no encontrado con el id: " + id);
 		}
 		usuarioRepository.deleteById(id);
 	}

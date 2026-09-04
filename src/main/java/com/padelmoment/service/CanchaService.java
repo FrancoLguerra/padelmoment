@@ -33,7 +33,7 @@ public class CanchaService {
 	
 	public Cancha actualizar(Long id, Cancha canchaActualizada) {
 		Cancha cancha = canchaRepository.findById(id)
-				.orElseThrow(()-> new RuntimeException("Cancha no encontrada"));
+				.orElseThrow(()-> new CanchaNotFoundException("Cancha no encontrada con id: " + id));
 		
 		cancha.setNombre(canchaActualizada.getNombre());
 		cancha.setTipo(canchaActualizada.getTipo());
@@ -44,7 +44,7 @@ public class CanchaService {
 	
 	public void eliminar(Long id) {
 		if(!canchaRepository.existsById(id)) {
-			throw new RuntimeException("La cancha o existe");
+			new CanchaNotFoundException("Cancha no encontrada con id: " + id);
 		}
 		
 		canchaRepository.deleteById(id);
